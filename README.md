@@ -80,37 +80,38 @@ export const {
 ```
 
 ```typescript
-    // initialization
-    import React from 'react';
-    import 'react-native-gesture-handler';
+// initialization
+import React from 'react';
+import 'react-native-gesture-handler';
 
-    import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 
-    import {ThemeProvider} from './providers/theme-provider';
-    import MainNavigator from './navigator';
-    import {AuthProvider} from './providers/auth-provider';
-    import {ApiProvider} from './providers/api-provider';
-    import {ContentProvider} from './providers/content-provider';
+import {ThemeProvider} from './providers/theme-provider';
+import MainNavigator from './navigator';
+import {AuthProvider} from './providers/auth-provider';
+import {ApiProvider} from './providers/api-provider';
+import {ContentProvider} from './providers/content-provider';
 
-    const App = () => {
-      return (
-        <>
-          <ThemeProvider>
-            <ContentProvider>
-              <ApiProvider>
-                <AuthProvider>
-                  <NavigationContainer>
-                    <MainNavigator />
-                  </NavigationContainer>
-                </AuthProvider>
-              </ApiProvider>
-            </ContentProvider>
-          </ThemeProvider>
-        </>
-      );
-    };
+const App = () => {
+  return (
+    <>
+      <ThemeProvider>
+        <ContentProvider>
+          <ApiProvider>
+            <AuthProvider>
+              <NavigationContainer>
+                <MainNavigator />
+              </NavigationContainer>
+            </AuthProvider>
+          </ApiProvider>
+        </ContentProvider>
+      </ThemeProvider>
+    </>
+  );
+};
 
-    export default App;
+export default App;
+```
 
 ## Views
 
@@ -120,69 +121,74 @@ export const {
 
 Components has a specific purpose and it should be almost always stateless, and yes, it may mean many parameters to make it works but here is where hooks come to the rescue.
 
-You could  also put default components hooks in the same folder as component.
+You could also put default components hooks in the same folder as component.
 
 ### Example
 
 This is an example of a custom textfield I made where also styles are in other folder
 
-    // text-field.tsx
-    import React from 'react';
-    import {TextInput, View, TextInputProps} from 'react-native';
-    import {textFieldStyle} from './style';
-    import Typography from '../typography';
+```typescript
+// text-field.tsx
+import React from 'react';
+import {TextInput, View, TextInputProps} from 'react-native';
+import {textFieldStyle} from './style';
+import Typography from '../typography';
 
-    interface Props extends TextInputProps {
-      label: string;
-    }
+interface Props extends TextInputProps {
+  label: string;
+}
 
-    function TextField(props: Props) {
-      return (
-        <View>
-          <Typography style={textFieldStyle.label} variant="body1">
-            {props.label}
-          </Typography>
-          <TextInput {...props} style={textFieldStyle.input} />
-        </View>
-      );
-    }
+function TextField(props: Props) {
+  return (
+    <View>
+      <Typography style={textFieldStyle.label} variant="body1">
+        {props.label}
+      </Typography>
+      <TextInput {...props} style={textFieldStyle.input} />
+    </View>
+  );
+}
 
-    export default TextField;
+export default TextField;
+```
 
 The `hook`
 
-    // use-multiple-text-fields.tsx
+```typescript
+// use-multiple-text-fields.tsx
 
-    import {useState} from 'react';
+import {useState} from 'react';
 
-    function useMultipleTextFields(properties: string[]) {
-      const [inputsValues, setInputsValues] = useState<any>({});
-      function createOnSetValue(property: string) {
-        return (ev: any) => {
-          const newInputData: any = {};
-          newInputData[property] = ev;
-          setInputsValues({...inputsValues, ...newInputData});
-        };
-      }
-      const inputs: any = {};
-      function clear() {
-        setInputsValues({});
-      }
+function useMultipleTextFields(properties: string[]) {
+  const [inputsValues, setInputsValues] = useState<any>({});
+  function createOnSetValue(property: string) {
+    return (ev: any) => {
+      const newInputData: any = {};
+      newInputData[property] = ev;
+      setInputsValues({...inputsValues, ...newInputData});
+    };
+  }
+  const inputs: any = {};
+  function clear() {
+    setInputsValues({});
+  }
 
-      properties.forEach(prop => {
-        inputs[prop] = {
-          onChangeText: createOnSetValue(prop),
-          value: inputsValues[prop],
-        };
-      });
+  properties.forEach(prop => {
+    inputs[prop] = {
+      onChangeText: createOnSetValue(prop),
+      value: inputsValues[prop],
+    };
+  });
 
-      return {clear, inputs};
-    }
+  return {clear, inputs};
+}
 
-    export default useMultipleTextFields;
+export default useMultipleTextFields;
+```
 
 And how you can use it togehter
 
+```typescript
     // sign-in.tsx
     function SignIn() {
       const {
