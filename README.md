@@ -16,77 +16,82 @@ Content is just a json that contains all Strings that application needs this is 
 
 This is how components and views share logic, specifically hooks. they could provide **theming**, **content, api** and logic. the way to created could be tedious but I made a function to created easly here are some examples.
 
-    // Content provider
-    import {makeProvider} from '../../_lib';
-    import {useState} from 'react';
-    import * as rawContent from '../../content';
-    
-    function useContent() {
-      const [content, setContent] = useState(rawContent);
-      return {content, setContent};
-    }
-    
-    export const {
-      Provider: ContentProvider,
-      useProvider: useContentProvider,
-    } = makeProvider(useContent);
+```typescript
+// Content provider
+import {makeProvider} from '../../_lib';
+import {useState} from 'react';
+import * as rawContent from '../../content';
 
-    // Auth provider
-    import {useReducer} from 'react';
-    import {makeProvider} from '../../_lib';
-    import {authReducer} from './auth-reducer';
-    import {useApiProvider} from '../api-provider';
-    import {useNavigation} from '@react-navigation/native';
-    
-    function useAuth() {
-      const [authState, dispatch] = useReducer(authReducer, {});
-    
-      const {
-        api: {auth},
-      } = useApiProvider();
-    
-      async function login(username: string, password: string) {
-        dispatch({
-          type: 'login',
-        });
-        const response: any = await auth.signIn(username, password);
-    
-        dispatch({
-          type: 'loginSuccess',
-          payload: {
-            username: response.username,
-          },
-        });
-      }
-    
-      function logout() {
-        dispatch({type: 'logout'});
-      }
-    
-      return {
-        ...authState,
-        login,
-        logout,
-      };
-    }
-    
-    export const {
-      Provider: AuthProvider,
-      useProvider: useAuthProvider,
-    } = makeProvider(useAuth);
+function useContent() {
+  const [content, setContent] = useState(rawContent);
+  return {content, setContent};
+}
 
+export const {
+  Provider: ContentProvider,
+  useProvider: useContentProvider,
+} = makeProvider(useContent);
+```
+
+```typescript
+// Auth provider
+import {useReducer} from 'react';
+import {makeProvider} from '../../_lib';
+import {authReducer} from './auth-reducer';
+import {useApiProvider} from '../api-provider';
+import {useNavigation} from '@react-navigation/native';
+
+function useAuth() {
+  const [authState, dispatch] = useReducer(authReducer, {});
+
+  const {
+    api: {auth},
+  } = useApiProvider();
+
+  async function login(username: string, password: string) {
+    dispatch({
+      type: 'login',
+    });
+    const response: any = await auth.signIn(username, password);
+
+    dispatch({
+      type: 'loginSuccess',
+      payload: {
+        username: response.username,
+      },
+    });
+  }
+
+  function logout() {
+    dispatch({type: 'logout'});
+  }
+
+  return {
+    ...authState,
+    login,
+    logout,
+  };
+}
+
+export const {
+  Provider: AuthProvider,
+  useProvider: useAuthProvider,
+} = makeProvider(useAuth);
+```
+
+```typescript
     // initialization
     import React from 'react';
     import 'react-native-gesture-handler';
-    
+
     import {NavigationContainer} from '@react-navigation/native';
-    
+
     import {ThemeProvider} from './providers/theme-provider';
     import MainNavigator from './navigator';
     import {AuthProvider} from './providers/auth-provider';
     import {ApiProvider} from './providers/api-provider';
     import {ContentProvider} from './providers/content-provider';
-    
+
     const App = () => {
       return (
         <>
@@ -104,7 +109,7 @@ This is how components and views share logic, specifically hooks. they could pro
         </>
       );
     };
-    
+
     export default App;
 
 ## Views
@@ -126,11 +131,11 @@ This is an example of a custom textfield I made where also styles are in other f
     import {TextInput, View, TextInputProps} from 'react-native';
     import {textFieldStyle} from './style';
     import Typography from '../typography';
-    
+
     interface Props extends TextInputProps {
       label: string;
     }
-    
+
     function TextField(props: Props) {
       return (
         <View>
@@ -141,15 +146,15 @@ This is an example of a custom textfield I made where also styles are in other f
         </View>
       );
     }
-    
+
     export default TextField;
 
 The `hook`
 
     // use-multiple-text-fields.tsx
-    
+
     import {useState} from 'react';
-    
+
     function useMultipleTextFields(properties: string[]) {
       const [inputsValues, setInputsValues] = useState<any>({});
       function createOnSetValue(property: string) {
@@ -163,17 +168,17 @@ The `hook`
       function clear() {
         setInputsValues({});
       }
-    
+
       properties.forEach(prop => {
         inputs[prop] = {
           onChangeText: createOnSetValue(prop),
           value: inputsValues[prop],
         };
       });
-    
+
       return {clear, inputs};
     }
-    
+
     export default useMultipleTextFields;
 
 And how you can use it togehter
@@ -183,7 +188,7 @@ And how you can use it togehter
       const {
         inputs: {username, password}, // Those have all properties to make it work
       } = useMultipleTextFields(['username', 'password']);
-    
+
     	return <>
     				 <TextField label={USERNAME_PLACEHOLDER} {...username} />
     			   <TextField
@@ -192,3 +197,4 @@ And how you can use it togehter
                 {...password}
               />
     		</>
+```
