@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {View, Text, Easing, Alert} from 'react-native';
+import {View, Easing} from 'react-native';
 import {styles, ShowTitle, ShowButtons} from './styles';
 import {useThemeProvider} from '../../providers/theme-provider';
 import Typography from '../../components/ui/typography';
